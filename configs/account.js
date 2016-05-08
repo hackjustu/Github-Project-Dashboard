@@ -1,5 +1,5 @@
 module.exports = {
     username: 'BitTigerDashBoardAgent',
     password: 'bittiger2016',
-    firebase_secrets: 'hh5zND83YPIn6rsPwMCq351WuBcx0vBweXdCZF6Y'
+    firebase_secrets: '5Ur8hI59nIqXHGJqwgHcjM1Yt5KDVERo5iU6ampC'
 }
