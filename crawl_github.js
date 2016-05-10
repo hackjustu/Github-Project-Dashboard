@@ -71,10 +71,10 @@ var crawl_github = function (production) {
                             return b['PushEvent'] - a['PushEvent'];
                         } else if (b['PullRequestEvent'] != a['PullRequestEvent']) {
                             return b['PullRequestEvent'] - a['PullRequestEvent'];
-                        } else if (b['PullRequestEvent'] != a['PullRequestEvent']) {
-                            return b['PullRequestEvent'] - a['PullRequestEvent'];
-                        } else {
+                        } else if (b['CreateEvent'] != a['CreateEvent']) {
                             return b['CreateEvent'] - a['CreateEvent'];
+                        } else {
+                            return b['ForkEvent'] - a['ForkEvent'];
                         }
                     });
 
@@ -102,7 +102,7 @@ var crawl_github = function (production) {
                                         'ranking': current_ranking
                                     });
 
-                                    /* 
+                                    /*
                                         Adjust the previous ranking range. If we have more than 100 records, we'll keep the latest
                                         20 records.
                                     */
@@ -167,7 +167,7 @@ var crawl_github = function (production) {
                     } else if (body.length == 0) {
                         reject('page empty');
                     } else {
-                        //console.log(body.length);                       
+                        //console.log(body.length);
                         github_info[key] = github_info[key].concat(body);
                         fulfill(body);
                     }
