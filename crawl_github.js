@@ -9,6 +9,7 @@ const Firebase = require('firebase');
 var ref = new Firebase(Account.firebase_url);
 var user_events_ref = ref.child("user_events");
 var user_ranking_info_ref = ref.child("user_ranking_info");
+var user_profile_ref = ref.child("user_profile");
 
 var crawl_github_auth = function (production) {
 
@@ -27,6 +28,7 @@ var crawl_github = function (production) {
 
     var github_info = {
         'members_list': [],
+        'members_profiles': [],
         'repository_list': []
     }
 
@@ -78,6 +80,8 @@ var crawl_github = function (production) {
                         }
                     });
 
+                    github_info.members_profiles = member_events.slice();
+
                     // retrieve members' last ranking from Firebase
                     var previous_rankings_promise = retrieve_previous_user_ranking();
                     previous_rankings_promise
@@ -126,19 +130,29 @@ var crawl_github = function (production) {
                                 }
                             }
 
+
+                            var update_tasks = [];
                             // update members' ranking records to Firebase
                             if (production) {
-                                update_previous_user_ranking(previous_rankings);
+                                var promise_previous_rankings_update = user_ranking_info_ref.set(new_records);
+                                update_tasks.push(promise_previous_rankings_update);
                             }
 
                             // retrieve the top 25 users' information
-                            top25_members = member_events.slice(0, 25);
+                            var top25_members = member_events.slice(0, 25);
                             console.log('Updating the database...');
-                            promise_events_update = user_events_ref.child('events').set(top25_members);
-                            promise_time_udpate =
+                            var promise_events_update = user_events_ref.child('events').set(top25_members);
+                            var promise_time_udpate =
                                 user_events_ref.child('created_time').set(current_time);
 
-                            Promise.all([promise_events_update, promise_time_udpate])
+                            update_tasks.push(promise_events_update);
+                            update_tasks.push(promise_time_udpate);
+
+                            // udpate all members' profiles info to firebase
+                            var promise_user_profiles_udpate = user_profile_ref.set(github_info.members_profiles);
+                            update_tasks.push(promise_user_profiles_udpate);
+
+                            Promise.all(update_tasks)
                                 .catch(function (err) {
                                     console.log(err);
                                 })
@@ -206,10 +220,6 @@ function retrieve_previous_user_ranking() {
             fulfill(result);
         });
     });
-}
-
-function update_previous_user_ranking(new_records) {
-    user_ranking_info_ref.set(new_records);
 }
 
 exports.crawl_github = crawl_github_auth;
