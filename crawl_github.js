@@ -34,9 +34,9 @@ var crawl_github = function (production) {
 
     var current_time = Utils.get_current_timestamp();
 
-    var funcs = Promise.resolve(Utils.make_range(1, 10).map((n) => makeRequest(make_option(n), 'members_list')));
+    var promisified_funcs = Promise.resolve(Utils.make_range(1, 10).map((n) => makeRequest(make_option(n), 'members_list')));
 
-    funcs
+    promisified_funcs
         .mapSeries(iterator)
         .catch(function (err) {
             console.log(err);
@@ -129,7 +129,6 @@ var crawl_github = function (production) {
                                     member_events[i].ranking_history = last_few_records;
                                 }
                             }
-
 
                             var update_tasks = [];
                             // update members' ranking records to Firebase

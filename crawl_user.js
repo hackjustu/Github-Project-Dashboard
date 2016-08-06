@@ -20,7 +20,7 @@ function crawl_user(user) {
             'avatar_url': user.avatar_url,
             'html_url': user.html_url,
             'organization': user.organization,
-            'location': user.location,
+            'location': 'M78',
             'Total': 0,
             'PushEvent': 0,
             'PullRequestEvent': 0,
@@ -28,8 +28,17 @@ function crawl_user(user) {
             'ForkEvent': 0
         }
 
-        var funcs = Promise.resolve(Utils.make_range(1, 10).map((n) => makeRequest(make_option(n, user.login))));
-        funcs
+        var funcs = Utils.make_range(1, 10).map((n) => make_request_for_events(make_option(n, user.login, 'events')));
+        /*
+           Insert the user_profile request at the beginning to ensure it gets called in the following .mapSeries() method
+           In Javascript, unshift means push at the beginning. Use the following graph for visualiation.
+           unshift -> array <- push
+           shift   <- array -> pop 
+        */
+        funcs.unshift(make_request_for_user_profile(make_option(1, user.login)));
+
+        var promisified_funcs = Promise.resolve(funcs);
+        promisified_funcs
             .mapSeries(iterator)
             .catch(function (err) {
                 console.log(err);
@@ -42,11 +51,11 @@ function crawl_user(user) {
 
                 //console.log(user_info);
                 console.log('Finished crawling: ' + user.login);
-
+                console.log(user_info);
                 fulfill(user_info);
             })
 
-        function makeRequest(option) {
+        function make_request_for_events(option) {
             return function () {
                 return new Promise(function (fulfill, reject) {
                     Request(option, function (error, response, body) {
@@ -63,9 +72,28 @@ function crawl_user(user) {
                                 reject('outdated events');
                             }
                         }
-                    })
-                })
-            };
+                    });
+                });
+            }
+        }
+
+        function make_request_for_user_profile(option) {
+            return function () {
+                return new Promise(function (fulfill, reject) {
+                    Request(option, function (error, response, body) {
+                        if (error) {
+                            reject(error);
+                        } else {
+                            if (body.location) {
+                                user_info.location = body.location;
+                            } else {
+                                console.log(user_info.location + " " + user_info.login + " " + user_info.email);
+                            }
+                            fulfill(body);
+                        }
+                    });
+                });
+            }
         }
 
         function parseBody(body) {
@@ -78,6 +106,9 @@ function crawl_user(user) {
                 for (var i = 0; i < body.length; i++) {
                     event_type = body[i].type;
                     event_date = body[i].created_at;
+                    console.log("event date is " + event_date);
+                    console.log("lastweek date is " + last_week_date);
+                    console.log("");
 
                     if (event_date >= last_week_date && (
                             event_type == 'PushEvent' ||
@@ -98,9 +129,16 @@ function iterator(f) {
     return f()
 }
 
-function make_option(page_number, user_id) {
+function make_option(page_number, user_id, relative_path) {
+
+    var request_url = 'https://api.github.com/users/' + user_id;
+
+    if (relative_path) {
+        request_url += '/' + relative_path;
+    }
+
     return {
-        url: 'https://api.github.com/users/' + user_id + '/events', // URL to hit
+        url: request_url, // URL to hit
         qs: { //Query string data
             page: page_number
         },
