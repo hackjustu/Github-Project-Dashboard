@@ -1,24 +1,23 @@
+"use strict"
+
 const Account = require('./configs/account');
 const Request = require('request');
 const Promise = require('bluebird');
 const Utils = require('./helpers/my_utils');
 
-var username = Account.username;
-var password = Account.password;
-var current_date = Utils.get_current_timestamp();
-var last_week_date = Utils.get_last_week_timestamp();
-console.log('**** The current date on server is ' + current_date);
-console.log('**** The last week date on server is ' + last_week_date);
+let username = Account.username;
+let password = Account.password;
+let current_date = Utils.get_current_timestamp();
+let last_week_date = Utils.get_last_week_timestamp();
 
 function crawl_user(user) {
 
-    return new Promise(function (fulfill, reject) {
-        console.log('user_id is ' + user.login);
+    return new Promise((fulfill, reject) => {
 
-        var user_info = {
+        let user_info = {
             'login': user.login,
-            'avatar_url': user.avatar_url,
-            'html_url': user.html_url,
+            'avatar_url': '',
+            'html_url': '',
             'organization': user.organization,
             'location': 'M78',
             'Total': 0,
@@ -28,44 +27,41 @@ function crawl_user(user) {
             'ForkEvent': 0
         }
 
-        var funcs = Utils.make_range(1, 10).map((n) => make_request_for_events(make_option(n, user.login, 'events')));
+        let funcs = Utils.make_range(1, 10).map((n) => make_request_for_events(make_option(n, user.login, 'events')));
         /*
            Insert the user_profile request at the beginning to ensure it gets called in the following .mapSeries() method
            In Javascript, unshift means push at the beginning. Use the following graph for visualiation.
            unshift -> array <- push
-           shift   <- array -> pop 
+           shift   <- array -> pop
         */
         funcs.unshift(make_request_for_user_profile(make_option(1, user.login)));
 
-        var promisified_funcs = Promise.resolve(funcs);
+        let promisified_funcs = Promise.resolve(funcs);
         promisified_funcs
-            .mapSeries(iterator)
-            .catch(function (err) {
-                console.log(err);
-            })
-            .finally(function () {
-                user_info['Total'] = user_info['PushEvent'] +
-                    user_info['PullRequestEvent'] +
-                    user_info['CreateEvent'] +
-                    user_info['ForkEvent'];
+        .mapSeries(iterator)
+        .catch((err) => {
+            console.log(user.login + " : " + err);
+        })
+        .finally(() => {
+            user_info['Total'] = user_info['PushEvent'] +
+                user_info['PullRequestEvent'] +
+                user_info['CreateEvent'] +
+                user_info['ForkEvent'];
 
-                //console.log(user_info);
-                console.log('Finished crawling: ' + user.login);
-                console.log(user_info);
-                fulfill(user_info);
-            })
+            console.log('Finished crawling: ' + user.login);
+            fulfill(user_info);
+        })
 
         function make_request_for_events(option) {
             return function () {
-                return new Promise(function (fulfill, reject) {
+                return new Promise((fulfill, reject) => {
                     Request(option, function (error, response, body) {
                         if (error) {
                             reject(error);
                         } else if (body.length == 0) {
                             reject('page empty');
                         } else {
-                            //console.log(body.length);
-                            var should_continue = parseBody(body);
+                            let should_continue = parseBody(body);
                             if (should_continue) {
                                 fulfill(body);
                             } else {
@@ -84,10 +80,14 @@ function crawl_user(user) {
                         if (error) {
                             reject(error);
                         } else {
+
+                            user_info.avatar_url = body.avatar_url;
+                            user_info.html_url = body.html_url;
+
                             if (body.location) {
                                 user_info.location = body.location;
                             } else {
-                                console.log(user_info.location + " " + user_info.login + " " + user_info.email);
+                                //console.log(user_info.location + " " + user_info.login + " " + user_info.email);
                             }
                             fulfill(body);
                         }
@@ -98,17 +98,14 @@ function crawl_user(user) {
 
         function parseBody(body) {
 
-            var should_continue = true;
-            if (body[0].created_at < last_week_date) {
+            let should_continue = true;
+            if (!body[0] ||  body[0].created_at < last_week_date) {
                 should_continue = false;
             } else {
 
-                for (var i = 0; i < body.length; i++) {
-                    event_type = body[i].type;
-                    event_date = body[i].created_at;
-                    console.log("event date is " + event_date);
-                    console.log("lastweek date is " + last_week_date);
-                    console.log("");
+                for (let i = 0; i < body.length; i++) {
+                    let event_type = body[i].type;
+                    let event_date = body[i].created_at;
 
                     if (event_date >= last_week_date && (
                             event_type == 'PushEvent' ||
@@ -131,7 +128,7 @@ function iterator(f) {
 
 function make_option(page_number, user_id, relative_path) {
 
-    var request_url = 'https://api.github.com/users/' + user_id;
+    let request_url = 'https://api.github.com/users/' + user_id;
 
     if (relative_path) {
         request_url += '/' + relative_path;

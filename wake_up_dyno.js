@@ -1,6 +1,6 @@
-var http = require('http'); //importing http
+let http = require('http'); //importing http
 
-var options = {
+let options = {
     host: 'warm-hamlet-26182.herokuapp.com',
     port: 80,
     path: '/crawl'

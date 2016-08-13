@@ -1,4 +1,6 @@
-var sindresorhus = {
+"use strict"
+
+let sindresorhus = {
     "login": "sindresorhus",
     "id": 170270,
     "avatar_url": "https://avatars.githubusercontent.com/u/170270?v=3",
@@ -32,7 +34,7 @@ var sindresorhus = {
     "organization": "top_coders"
 };
 
-var ruanyf = {
+let ruanyf = {
     "login": "ruanyf",
     "id": 905434,
     "avatar_url": "https://avatars.githubusercontent.com/u/905434?v=3",
@@ -66,5 +68,5 @@ var ruanyf = {
     "organization": "top_coders"
 };
 
-var top_coders = [sindresorhus, ruanyf];
+let top_coders = [sindresorhus, ruanyf];
 exports.top_coders = top_coders;

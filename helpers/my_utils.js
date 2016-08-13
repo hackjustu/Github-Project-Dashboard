@@ -1,3 +1,5 @@
+"use strict"
+
 const Moment = require('moment-timezone');
 
 function get_current_timestamp_h() {
@@ -16,8 +18,8 @@ function get_last_week_timestamp() {
 }
 
 function make_range(start, end) {
-    var result = [];
-    for (var i = start; i <= end; i++) {
+    let result = [];
+    for (let i = start; i <= end; i++) {
         result.push(i);
     }
     return result;
