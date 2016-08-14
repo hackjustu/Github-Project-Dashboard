@@ -1,13 +1,33 @@
-let http = require('http'); //importing http
+const http = require('http'); //importing http
 
-let options = {
+let options_1 = {
     host: 'warm-hamlet-26182.herokuapp.com',
     port: 80,
     path: '/crawl'
 };
 
-console.log("======WAKUP DYNO START");
-http.get(options, function (res) {
+let options_2 = {
+    host: 'shrouded-bayou-32204.herokuapp.com',
+    port: 80,
+    path: '/crawl'
+};
+
+console.log("======WAKUP DYNO START: BitTiger Geek Ranking Board");
+http.get(options_1, function (res) {
+    res.on('data', function (chunk) {
+        try {
+            // optional logging... disable after it's working
+            console.log("======WAKUP DYNO: HEROKU RESPONSE: " + chunk);
+        } catch (err) {
+            console.log(err.message);
+        }
+    });
+}).on('error', function (err) {
+    console.log("Error: " + err.message);
+});
+
+console.log("======WAKUP DYNO START: BitTiger Project Geek Ranking Board");
+http.get(options_2, function (res) {
     res.on('data', function (chunk) {
         try {
             // optional logging... disable after it's working
