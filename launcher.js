@@ -31,7 +31,7 @@ app.get('/test', function (req, res) {
 });
 
 app.get('/', function (req, res) {
-    res.send('Welcome to the BitTiger Github crawler!!');
+    res.send('Welcome to the BitTiger Project crawler!!');
 });
 
 app.listen(port, function () {
