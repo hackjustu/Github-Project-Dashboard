@@ -10,17 +10,17 @@ const filepath = "./helpers/project_member_list.txt";
 
 let db = {};
 
+// 新Firebase的initialization方法
+let mainApp = Firebase.initializeApp({
+    serviceAccount: Account.firebase_config,
+    databaseURL: "https://bittiger-project-geeks-ranking.firebaseio.com",
+});
+
+db.mainApp = mainApp.database();
+db.user_events = db.mainApp.ref("user_events");
+db.user_ranking_info = db.mainApp.ref("user_ranking_info");
+
 let crawl_github_auth = (production) => {
-
-    // 新Firebase的initialization方法
-    let mainApp = Firebase.initializeApp({
-        serviceAccount: Account.firebase_config,
-        databaseURL: "https://bittiger-project-geeks-ranking.firebaseio.com",
-    });
-
-    db.mainApp = mainApp.database();
-    db.user_events = db.mainApp.ref("user_events");
-    db.user_ranking_info = db.mainApp.ref("user_ranking_info");
 
     crawl_github(production);
 }
