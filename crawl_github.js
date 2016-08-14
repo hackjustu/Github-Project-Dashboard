@@ -119,6 +119,7 @@ let crawl_github = (production) => {
             let update_tasks = [];
             // update members' ranking records to Firebase
             if (production) {
+                console.log("-- Update members's ranking records to Firebase.");
                 let promise_previous_rankings_update = db.user_ranking_info.set(previous_rankings);
                 update_tasks.push(promise_previous_rankings_update);
             }
