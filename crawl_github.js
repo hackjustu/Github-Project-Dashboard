@@ -150,6 +150,4 @@ function terminate_app() {
     // process.exit();
 }
 
-crawl_github_auth(true);
-
 exports.crawl_github = crawl_github_auth;
