@@ -134,7 +134,7 @@ var crawl_github = function (production) {
                             var update_tasks = [];
                             // update members' ranking records to Firebase
                             if (production) {
-                                var promise_previous_rankings_update = user_ranking_info_ref.set(new_records);
+                                var promise_previous_rankings_update = user_ranking_info_ref.set(previous_rankings);
                                 update_tasks.push(promise_previous_rankings_update);
                             }
 
