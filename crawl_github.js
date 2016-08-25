@@ -108,7 +108,7 @@ var crawl_github = function (production) {
                                     if (previous_rankings[user].length > 100) {
                                         var pre_range = previous_rankings[user];
                                         var pre_range_len = pre_range.length;
-                                        var lastest_30_range = previous_range.slice(pre_range_len - 30, pre_range_len);
+                                        var lastest_30_range = pre_range.slice(pre_range_len - 30, pre_range_len);
                                         previous_rankings[user] = lastest_30_range;
                                     }
                                 } else {
