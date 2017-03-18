@@ -1,3 +1,5 @@
+> **This repository is for the crawler app.** Click [here](https://github.com/hackjustu/Github-Ranking-FrontEnd) to see the front-end app.
+
 # 太阁极客榜 (BitTiger Geeks Ranking)
 
 **太阁极客榜**（or **BitTiger Geeks Ranking**）is a real-time ranking board for BitTiger's Github members. Its results are based on members' Github activities in the past seven days with daily updates at **06:30 PDT**.
@@ -17,8 +19,6 @@ This project consists of three components:
 1.  A crawler to dig the members' public data and calculates their rankings.
 2.  A Firebase-powered persistence layer for the results from the crawler.
 3.  A front-end single-page app to show the members' rankings from the persistence layer.
-
-> **This repository is for the crawler app.** Click [here](https://github.com/hackjustu/Github-Ranking-FrontEnd) to see the front-end app.
 
 ## Usage
 To start the application:
@@ -123,7 +123,7 @@ We adopt [**Clash of Clans**](supercell.com/en/games/clashofclans/)'s medal syst
 - [Freepik](http://www.freepik.com/) contributes several cool free images.
 
 ## License
-MIT © [Cosmo](https://github.com/hackjustu)
+[MIT ©Cosmo](./LICENSE)
 
 ## Repository information
 - category: full stack
